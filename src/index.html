@@ -7,5 +7,44 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="drop" class="drop-overlay" style="display: none;">
+        <div style="margin-top: 25px;">Drop here to import</div>
+    </div> 
   </body>
+  <script>
+    (function () {
+        var holder = document.getElementById('root');
+        var drop = document.getElementById('drop');
+
+        holder.ondragover = () => {
+            document.getElementById("root").classList.add("dragover");
+            document.getElementById('drop').style.display = "block";
+            return false;
+        };
+
+        holder.ondragleave = () => {
+            document.getElementById("root").classList.remove("dragover");  
+            document.getElementById('drop').style.display = "none";         
+            return false;
+        };
+
+        holder.ondragend = () => {
+            document.getElementById("root").classList.remove("dragover");
+            document.getElementById('drop').style.display = "none"; 
+            return false;
+        };
+
+        holder.ondrop = (e) => {
+            e.preventDefault();
+            document.getElementById("root").classList.remove("dragover");
+            document.getElementById('drop').style.display = "none"; 
+            //console.log('bla', e.dataTransfer.files);
+            window.dispatchEvent(new CustomEvent('dropped-files', { detail: e.dataTransfer.files }))
+            //for (let f of e.dataTransfer.files) {
+            //    console.log('File(s) you dragged here: ', f.path)
+            //}            
+            return false;
+        };
+    })();
+</script>
 </html>

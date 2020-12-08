@@ -5,6 +5,7 @@ export interface Stats {
     distance : number,
     time: number,
     one : number | undefined,
+    three : number | undefined,
     five : number | undefined,
     ten : number | undefined
 }

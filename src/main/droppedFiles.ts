@@ -1,22 +1,12 @@
-import { dialog, Notification } from 'electron';
+import { Notification } from 'electron';
 
 import { Parser } from 'tcx-js';
 import { ActivityData, readActivities, saveActivites } from './db';
 import { calculateStats } from './findStats';
 
-const importFromFile = async () : Promise<ActivityData[] | undefined> => {
-  
-  const response = await dialog.showOpenDialog({ 
-    filters: [{
-      name: 'tcx',
-      extensions: ['tcx']
-
-      }],
-    properties: ['openFile'] 
-  });
-  if (!response.canceled) {
+const droppedFiles =  (ff : string) : ActivityData[] | undefined => {
     
-    const parser = new Parser(response.filePaths[0]);
+    const parser = new Parser(ff);
     const a = parser.activity;
     const newEl = {
       activityId : a.activityId,
@@ -42,9 +32,7 @@ const importFromFile = async () : Promise<ActivityData[] | undefined> => {
       urgency: 'low'
     }).show();
     return activities;
-  } else {
-    return undefined;
-  }    
+      
 };
 
-export default importFromFile;
+export default (e : any, ff : string) : Promise<ActivityData[]> => new Promise<ActivityData[]>( res => res(droppedFiles(ff)));

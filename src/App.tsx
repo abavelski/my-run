@@ -1,7 +1,7 @@
 import { hot, setConfig } from 'react-hot-loader';
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
+  MemoryRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
@@ -32,16 +32,29 @@ const App = () => {
   const [activities, setActivities] = useState<ActivityData[]>([]);
 
   const openDialog = () => {
-    ipcRenderer.invoke('import-from-file').then( function(res : ActivityData[]) {
-      setActivities(res);
-    } )
+    ipcRenderer.invoke( 'import-from-file').then(function(res : ActivityData[]) {
+      if (res) {
+        setActivities(res);
+      }
+    });
+  }
+
+  const droppedFiles = (e : CustomEvent) => {
+    console.log('xxx', e.detail[0].path);
+    ipcRenderer.invoke('dropped-files', e.detail[0].path).then(function(res : ActivityData[]) {
+      if (res) {
+        setActivities(res);
+      }
+    } );
   }
 
   useEffect(() => {
       console.log('App -> useEffect');
+      window.addEventListener("dropped-files", droppedFiles);
       ipcRenderer.invoke('read-activities').then( function(res : ActivityData[]) {
         setActivities(res);
       } )
+      return  () => window.removeEventListener("dropped-files", droppedFiles);
     }, []);
 
   return (

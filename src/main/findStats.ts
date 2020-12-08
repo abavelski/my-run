@@ -45,6 +45,7 @@ export const calculateStats = (trackpoints : Trackpoint[]) : Stats => {
         time: points.length,
         distance : points.reduce((sum, c) => sum + c, 0),
         one : bestTimeForDistance(1000, points),
+        three : bestTimeForDistance(3000, points),
         five: bestTimeForDistance(5000, points),
         ten: bestTimeForDistance(10000, points)
     };
